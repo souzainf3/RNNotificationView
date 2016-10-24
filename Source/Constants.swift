@@ -25,6 +25,8 @@ internal struct NotificationLayout {
 
     
     static var labelMessageHeight: CGFloat = 35
+    static var dragViewHeight: CGFloat = 3
+
 
     
     static let iconSize = CGSize(width: 36, height: 36)

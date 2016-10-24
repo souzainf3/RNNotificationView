@@ -48,9 +48,11 @@ public class RNNotificationView: UIToolbar {
             }
         }
     }
-    private var verticalPositionConstraint: NSLayoutConstraint!
+    
     private var tapAction: (() -> ())?
 
+    /// Views
+    
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
 //        imageView.translatesAutoresizingMaskIntoConstraints = false // auto-layout only
@@ -80,10 +82,28 @@ public class RNNotificationView: UIToolbar {
         return subtitleLabel
         }()
     
+    private lazy var dragView: UIView = { [unowned self] in
+        let dragView = UIView()
+        dragView.backgroundColor = UIColor(white: 1.0, alpha: 0.75)
+        dragView.layer.cornerRadius = NotificationLayout.dragViewHeight / 2
+        return dragView
+        }()
+    
+    
+    /// Frames
     
     private var imageViewFrame: CGRect {
         return CGRect(x: 15.0, y: 8.0, width: 20.0, height: 20.0)
     }
+    
+    private var dragViewFrame: CGRect {
+        let width: CGFloat = 40
+        return CGRect(x: (NotificationLayout.width - width) / 2 ,
+                      y: NotificationLayout.height - 5,
+                      width: width,
+                      height: NotificationLayout.dragViewHeight)
+    }
+    
 
     private var titleLabelFrame: CGRect {
         if self.imageView.image == nil {
@@ -165,6 +185,7 @@ public class RNNotificationView: UIToolbar {
         self.titleLabel.frame = self.titleLabelFrame
         self.imageView.frame = self.imageViewFrame
         self.subtitleLabel.frame = self.messageLabelFrame
+        self.dragView.frame = self.dragViewFrame
 
         fixLabelMessageSize()
     }
@@ -192,6 +213,7 @@ public class RNNotificationView: UIToolbar {
         self.addSubview(self.titleLabel)
         self.addSubview(self.subtitleLabel)
         self.addSubview(self.imageView)
+        self.addSubview(self.dragView)
         
         
         // Gestures
@@ -270,7 +292,7 @@ public class RNNotificationView: UIToolbar {
         self.hide(completion: nil)
     }
     
-    dynamic internal func hide(completion completion: (() -> ())?) {
+    public func hide(completion completion: (() -> ())?) {
         
         guard !self.isDragging else {
             self.dismissTimer = nil
@@ -311,9 +333,12 @@ public class RNNotificationView: UIToolbar {
     }
     
     
+    // MARK: - Tap gestures
+    
     @objc private func didTap(gesture: UIGestureRecognizer) {
         self.userInteractionEnabled = false
-        self.hide(completion: self.tapAction)
+        self.tapAction?()
+        self.hide(completion: nil)
     }
 
     @objc private func didPan(gesture: UIPanGestureRecognizer) {
@@ -358,9 +383,8 @@ public class RNNotificationView: UIToolbar {
         }
         
     }
-
-    
 }
+
 
 
 public extension RNNotificationView {
