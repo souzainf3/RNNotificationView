@@ -6,7 +6,7 @@ Easy to use and customizable messages/notifications for iOS applications. ToatVi
 
 
 
-[![](https://github.com/souzainf3/RNNotificationView/blob/master/git/RNNotificationView.gif?raw=true)](https://github.com/souzainf3/RNNotificationView/blob/master/git/RNNotificationView.gif?raw=true)
+[![](https://raw.githubusercontent.com/souzainf3/RNNotificationView/master/gif/rnnotificationview.gif)](https://raw.githubusercontent.com/souzainf3/RNNotificationView/master/gif/rnnotificationview.gif)
 
 ## Support
 
