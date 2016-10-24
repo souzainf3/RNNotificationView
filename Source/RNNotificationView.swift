@@ -10,7 +10,8 @@ import UIKit
 public class RNNotificationView: UIToolbar {
     
     // MARK: - Properties
-    private static var sharedNotification = RNNotificationView()
+    
+    public static var sharedNotification = RNNotificationView()
 
     public var titleFont = Notification.titleFont {
         didSet {
@@ -32,14 +33,10 @@ public class RNNotificationView: UIToolbar {
             subtitleLabel.textColor = subtitleTextColor
         }
     }
-    public var duration: NSTimeInterval = 2.5
+    public var duration: NSTimeInterval = Notification.exhibitionDuration
     
     public private(set) var isAnimating = false
     public private(set) var isDragging = false
-    
-//    public private(set) var title: String?
-//    public private(set) var message: String?
-//    public private(set) var accessoryType: NotificationViewAccessoryType = .None
     
     private var dismissTimer: NSTimer? {
         didSet {
@@ -51,11 +48,11 @@ public class RNNotificationView: UIToolbar {
     
     private var tapAction: (() -> ())?
 
+   
     /// Views
     
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
-//        imageView.translatesAutoresizingMaskIntoConstraints = false // auto-layout only
         imageView.layer.cornerRadius = 3
         imageView.contentMode = UIViewContentMode.ScaleAspectFill
         imageView.clipsToBounds = true
@@ -63,7 +60,6 @@ public class RNNotificationView: UIToolbar {
     }()
     private lazy var titleLabel: UILabel = { [unowned self] in
         let titleLabel = UILabel()
-//        titleLabel.translatesAutoresizingMaskIntoConstraints = false // auto-layout only
         titleLabel.backgroundColor = UIColor.clearColor()
         titleLabel.textAlignment = .Left
         titleLabel.numberOfLines = 1
@@ -73,7 +69,6 @@ public class RNNotificationView: UIToolbar {
         }()
     private lazy var subtitleLabel: UILabel = { [unowned self] in
         let subtitleLabel = UILabel()
-//        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false // auto-layout only
         subtitleLabel.backgroundColor = UIColor.clearColor()
         subtitleLabel.textAlignment = .Left
         subtitleLabel.numberOfLines = 2
@@ -84,7 +79,7 @@ public class RNNotificationView: UIToolbar {
     
     private lazy var dragView: UIView = { [unowned self] in
         let dragView = UIView()
-        dragView.backgroundColor = UIColor(white: 1.0, alpha: 0.75)
+        dragView.backgroundColor = UIColor(white: 1.0, alpha: 0.65)
         dragView.layer.cornerRadius = NotificationLayout.dragViewHeight / 2
         return dragView
         }()
@@ -268,7 +263,7 @@ public class RNNotificationView: UIToolbar {
         }
         
         /// Show animation
-        UIView.animateWithDuration(Notification.showAnimationDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+        UIView.animateWithDuration(Notification.animationDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
             
             var frame = self.frame
             frame.origin.y += frame.size.height
@@ -280,7 +275,7 @@ public class RNNotificationView: UIToolbar {
         
         // Schedule to hide
         if self.duration > 0 {
-            self.dismissTimer = NSTimer.scheduledTimerWithTimeInterval(Notification.notificationDuration, target: self, selector: #selector(RNNotificationView.scheduledDismiss), userInfo: nil, repeats: false)
+            self.dismissTimer = NSTimer.scheduledTimerWithTimeInterval(Notification.animationDuration, target: self, selector: #selector(RNNotificationView.scheduledDismiss), userInfo: nil, repeats: false)
         }
         
         
@@ -314,7 +309,7 @@ public class RNNotificationView: UIToolbar {
         self.dismissTimer = nil
         
         /// Show animation
-        UIView.animateWithDuration(Notification.showAnimationDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+        UIView.animateWithDuration(Notification.animationDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
             
             var frame = self.frame
             frame.origin.y -= frame.size.height

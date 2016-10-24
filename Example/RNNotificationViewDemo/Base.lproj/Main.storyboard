@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="16A323" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -17,22 +17,32 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6lS-fN-27P">
-                                <rect key="frame" x="195" y="50" width="210" height="30"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="XAF-VW-5ci">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Irg-iY-Bwe">
+                                <rect key="frame" x="208" y="285" width="184" height="30"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="210" id="8gw-ve-ylz"/>
-                                    <constraint firstAttribute="height" constant="30" id="Hb0-oV-Z4N"/>
+                                    <constraint firstAttribute="width" constant="184" id="S0N-vH-HY3"/>
+                                    <constraint firstAttribute="height" constant="30" id="rf1-cF-bFQ"/>
                                 </constraints>
-                                <state key="normal" title="Button"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="18"/>
+                                <state key="normal" title="Show Notification">
+                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
                                 <connections>
-                                    <action selector="action" destination="BYZ-38-t0r" eventType="touchUpInside" id="IXM-XU-pEE"/>
+                                    <action selector="showAlertAction" destination="BYZ-38-t0r" eventType="touchUpInside" id="t7f-0U-mkt"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="6lS-fN-27P" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="czf-bt-SAU"/>
-                            <constraint firstItem="6lS-fN-27P" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="30" id="mCA-eW-nWt"/>
+                            <constraint firstAttribute="trailing" secondItem="XAF-VW-5ci" secondAttribute="trailing" id="9H1-2d-MGK"/>
+                            <constraint firstItem="Irg-iY-Bwe" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="CjZ-r2-CON"/>
+                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="XAF-VW-5ci" secondAttribute="bottom" id="E7o-T7-es9"/>
+                            <constraint firstItem="XAF-VW-5ci" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="PQk-PX-Y9Z"/>
+                            <constraint firstItem="Irg-iY-Bwe" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="llp-go-kre"/>
+                            <constraint firstItem="XAF-VW-5ci" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="ynK-mx-6dY"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -41,4 +51,7 @@
             <point key="canvasLocation" x="226" y="372"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="background" width="1600" height="1067"/>
+    </resources>
 </document>

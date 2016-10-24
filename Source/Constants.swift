@@ -14,8 +14,8 @@ internal struct Notification {
     static let titleFont = UIFont.boldSystemFontOfSize(14)
     static let subtitleFont = UIFont.systemFontOfSize(13)
     
-    static let showAnimationDuration: NSTimeInterval = 0.3 // second(s)
-    static let notificationDuration: NSTimeInterval  = 5.0 // second(s)
+    static let animationDuration: NSTimeInterval = 0.3 // second(s)
+    static let exhibitionDuration: NSTimeInterval  = 5.0 // second(s)
 
 }
 
