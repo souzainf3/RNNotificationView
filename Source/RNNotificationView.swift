@@ -79,7 +79,7 @@ public class RNNotificationView: UIToolbar {
     
     private lazy var dragView: UIView = { [unowned self] in
         let dragView = UIView()
-        dragView.backgroundColor = UIColor(white: 1.0, alpha: 0.65)
+        dragView.backgroundColor = UIColor(white: 1.0, alpha: 0.35)
         dragView.layer.cornerRadius = NotificationLayout.dragViewHeight / 2
         return dragView
         }()
@@ -231,100 +231,11 @@ public class RNNotificationView: UIToolbar {
         self.subtitleLabel.frame = frame;
     }
     
-    // MARK: - Public Methods
-    
-    public func show(withImage image: UIImage?, title: String?, message: String?, onTap: (() -> ())?) {
-        
-        /// Invalidate dismissTimer
-        self.dismissTimer = nil
-        
-        // Tap action
-        self.tapAction = onTap
-        
-        /// Image
-        self.imageView.image = image
-        self.titleLabel.text = title
-        self.subtitleLabel.text = message
-        
-        /// Prepare frame
-        var frame = self.frame
-        frame.origin.y = -frame.size.height
-        self.frame = frame
-        
-        self.setupFrames()
-        
-        self.userInteractionEnabled = true
-        self.isAnimating = true
-        
-        /// Add to window
-        if let window = UIApplication.sharedApplication().delegate?.window {
-            window?.windowLevel = UIWindowLevelStatusBar
-            window?.addSubview(self)
-        }
-        
-        /// Show animation
-        UIView.animateWithDuration(Notification.animationDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
-            
-            var frame = self.frame
-            frame.origin.y += frame.size.height
-            self.frame = frame
-            
-        }) { (finished) in
-            self.isAnimating = false
-        }
-        
-        // Schedule to hide
-        if self.duration > 0 {
-            self.dismissTimer = NSTimer.scheduledTimerWithTimeInterval(Notification.animationDuration, target: self, selector: #selector(RNNotificationView.scheduledDismiss), userInfo: nil, repeats: false)
-        }
-        
-        
-    }
     
     // MARK: - Actions
     
     @objc private func scheduledDismiss() {
         self.hide(completion: nil)
-    }
-    
-    public func hide(completion completion: (() -> ())?) {
-        
-        guard !self.isDragging else {
-            self.dismissTimer = nil
-            return
-        }
-        
-        if self.superview == nil {
-            isAnimating = false
-            return
-        }
-        
-        // Case are in animation of the hide
-        if (isAnimating) {
-            return
-        }
-        isAnimating = true
-        
-        // Invalidate timer auto close
-        self.dismissTimer = nil
-        
-        /// Show animation
-        UIView.animateWithDuration(Notification.animationDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
-            
-            var frame = self.frame
-            frame.origin.y -= frame.size.height
-            self.frame = frame
-            
-        }) { (finished) in
-            
-            self.removeFromSuperview()
-            UIApplication.sharedApplication().delegate?.window??.windowLevel = UIWindowLevelNormal
-            
-            self.isAnimating = false
-            
-            completion?()
-
-        }
     }
     
     
@@ -383,7 +294,109 @@ public class RNNotificationView: UIToolbar {
 
 
 public extension RNNotificationView {
-    public static func show(image image: UIImage?, title: String?, message: String?, onTap: (() -> ())?) {
+    
+    // MARK: - Public Methods
+    
+    public func show(withImage image: UIImage?, title: String?, message: String?, duration: NSTimeInterval = Notification.exhibitionDuration, onTap: (() -> ())?) {
+        
+        /// Invalidate dismissTimer
+        self.dismissTimer = nil
+        
+        // Tap action
+        self.tapAction = onTap
+        
+        // Duration
+        self.duration = duration
+        
+        /// Image
+        self.imageView.image = image
+        self.titleLabel.text = title
+        self.subtitleLabel.text = message
+        
+        /// Prepare frame
+        var frame = self.frame
+        frame.origin.y = -frame.size.height
+        self.frame = frame
+        
+        self.setupFrames()
+        
+        self.userInteractionEnabled = true
+        self.isAnimating = true
+        
+        /// Add to window
+        if let window = UIApplication.sharedApplication().delegate?.window {
+            window?.windowLevel = UIWindowLevelStatusBar
+            window?.addSubview(self)
+        }
+        
+        /// Show animation
+        UIView.animateWithDuration(Notification.animationDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+            
+            var frame = self.frame
+            frame.origin.y += frame.size.height
+            self.frame = frame
+            
+        }) { (finished) in
+            self.isAnimating = false
+        }
+        
+        // Schedule to hide
+        if self.duration > 0 {
+            self.dismissTimer = NSTimer.scheduledTimerWithTimeInterval(Notification.animationDuration, target: self, selector: #selector(RNNotificationView.scheduledDismiss), userInfo: nil, repeats: false)
+        }
+        
+        
+    }
+    
+    public func hide(completion completion: (() -> ())?) {
+        
+        guard !self.isDragging else {
+            self.dismissTimer = nil
+            return
+        }
+        
+        if self.superview == nil {
+            isAnimating = false
+            return
+        }
+        
+        // Case are in animation of the hide
+        if (isAnimating) {
+            return
+        }
+        isAnimating = true
+        
+        // Invalidate timer auto close
+        self.dismissTimer = nil
+        
+        /// Show animation
+        UIView.animateWithDuration(Notification.animationDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+            
+            var frame = self.frame
+            frame.origin.y -= frame.size.height
+            self.frame = frame
+            
+        }) { (finished) in
+            
+            self.removeFromSuperview()
+            UIApplication.sharedApplication().delegate?.window??.windowLevel = UIWindowLevelNormal
+            
+            self.isAnimating = false
+            
+            completion?()
+            
+        }
+    }
+
+    
+    // MARK: - Helpers
+    
+    public static func show(withImage image: UIImage?, title: String?, message: String?, duration: NSTimeInterval = Notification.exhibitionDuration, onTap: (() -> ())? = nil) {
         self.sharedNotification.show(withImage: image, title: title, message: message, onTap: onTap)
     }
+    
+    public static func hide(completion completion: (() -> ())? = nil) {
+        self.sharedNotification.hide(completion: completion)
+    }
+
 }

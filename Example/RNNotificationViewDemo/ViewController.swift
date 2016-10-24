@@ -25,12 +25,11 @@ class ViewController: UIViewController {
     // Actions
     
     @IBAction func showAlertAction() {
-        RNNotificationView.show(
-            image: UIImage(named: "sambleIcon"),
-            title: "Zee Finance",
-            message: "Do not compromise more than 30% of their income on rent. Do not compromise more than 30% of their income on rent.",
-            onTap: {
-                print("Did tap notification")
+        RNNotificationView.show(withImage: UIImage(named: "sambleIcon"),
+                                title: "Zee Finance",
+                                message: "Do not compromise more than 30% of their income on rent. Do not compromise more than 30% of their income on rent.",
+                                onTap: {
+                                    print("Did tap notification")
             }
         )
     }
