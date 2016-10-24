@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
 Easy to use and customizable messages/notifications for iOS applications. ToatView with gestures.
                    DESC
 
-  s.homepage     = "https://github.com/souzainf3/RNLoadingButton-Swift"
+  s.homepage     = "https://github.com/souzainf3/RNNotificationView"
   # s.screenshots  = "www.example.com/screenshots_1.gif", "www.example.com/screenshots_2.gif"
   s.license      = { :type => "MIT", :file => "LICENSE" }
   s.author             = { "Romilson Nunes" => "souzainf3@yahoo.com.br" }
