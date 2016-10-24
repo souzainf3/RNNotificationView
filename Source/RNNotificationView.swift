@@ -233,13 +233,13 @@ public class RNNotificationView: UIToolbar {
     
     // MARK: - Public Methods
     
-    public func show(withImage image: UIImage?, title: String?, message: String?) {
+    public func show(withImage image: UIImage?, title: String?, message: String?, onTap: (() -> ())?) {
         
         /// Invalidate dismissTimer
         self.dismissTimer = nil
         
         // Tap action
-        //        self.sharedNotification.tapAction
+        self.tapAction = onTap
         
         /// Image
         self.imageView.image = image
@@ -383,7 +383,7 @@ public class RNNotificationView: UIToolbar {
 
 
 public extension RNNotificationView {
-    public static func show(image image: UIImage?, title: String?, message: String?) {
-        self.sharedNotification.show(withImage: image, title: title, message: message)
+    public static func show(image image: UIImage?, title: String?, message: String?, onTap: (() -> ())?) {
+        self.sharedNotification.show(withImage: image, title: title, message: message, onTap: onTap)
     }
 }
