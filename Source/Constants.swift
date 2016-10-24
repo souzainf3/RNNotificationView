@@ -11,21 +11,25 @@ import UIKit
 internal let UILayoutPriorityNotificationPadding: Float = 999
 
 internal struct Notification {
-    static let titleFont = UIFont.systemFontOfSize(16)
-    static let subtitleFont = UIFont.systemFontOfSize(12)
+    static let titleFont = UIFont.boldSystemFontOfSize(14)
+    static let subtitleFont = UIFont.systemFontOfSize(13)
+    
+    static let showAnimationDuration: NSTimeInterval = 0.3 // second(s)
+    static let notificationDuration: NSTimeInterval  = 5.0 // second(s)
+
 }
 
 internal struct NotificationLayout {
-    static let notificationSpacing: CGFloat = 10
-    static let notificationHeight: CGFloat = 64.0
-    static var notificationWidth: CGFloat { return UIScreen.mainScreen().bounds.size.width }
+    static let height: CGFloat = 64.0
+    static var width: CGFloat { return UIScreen.mainScreen().bounds.size.width }
+
     
+    static var labelMessageHeight: CGFloat = 35
 
+    
     static let iconSize = CGSize(width: 36, height: 36)
-    static let iconLeading: CGFloat = 15
 
-    static let labelHorizontalPadding: CGFloat = 10
-    static let labelVerticalPadding: CGFloat = 10
+    static let labelPadding: CGFloat = 45
 
     static let accessoryViewTrailing: CGFloat = 15
 }

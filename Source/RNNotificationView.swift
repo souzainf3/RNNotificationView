@@ -10,7 +10,7 @@ import UIKit
 public class RNNotificationView: UIToolbar {
     
     // MARK: - Properties
-//    public static var sharedNotification = NotificationView()
+    private static var sharedNotification = RNNotificationView()
 
     public var titleFont = Notification.titleFont {
         didSet {
@@ -35,33 +35,71 @@ public class RNNotificationView: UIToolbar {
     public var duration: NSTimeInterval = 2.5
     
     public private(set) var isAnimating = false
-    public private(set) var title: String?
-    public private(set) var subtitle: String?
+    public private(set) var isDragging = false
+    
+//    public private(set) var title: String?
+//    public private(set) var message: String?
 //    public private(set) var accessoryType: NotificationViewAccessoryType = .None
     
-    private lazy var iconImageView: UIImageView = {
-        let iconImageView = UIImageView()
-        iconImageView.translatesAutoresizingMaskIntoConstraints = false
-        return iconImageView
+    private var dismissTimer: NSTimer? {
+        didSet {
+            if oldValue?.valid == true {
+                oldValue?.invalidate()
+            }
+        }
+    }
+    private var verticalPositionConstraint: NSLayoutConstraint!
+//    private var tapAction = #selector(NotificationView.notificationViewTapped)
+
+    
+    private lazy var imageView: UIImageView = {
+        let imageView = UIImageView()
+//        imageView.translatesAutoresizingMaskIntoConstraints = false // auto-layout only
+        imageView.layer.cornerRadius = 3
+        imageView.contentMode = UIViewContentMode.ScaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
     }()
     private lazy var titleLabel: UILabel = { [unowned self] in
         let titleLabel = UILabel()
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+//        titleLabel.translatesAutoresizingMaskIntoConstraints = false // auto-layout only
         titleLabel.backgroundColor = UIColor.clearColor()
         titleLabel.textAlignment = .Left
+        titleLabel.numberOfLines = 1
         titleLabel.font = self.titleFont
         titleLabel.textColor = self.titleTextColor
         return titleLabel
         }()
     private lazy var subtitleLabel: UILabel = { [unowned self] in
         let subtitleLabel = UILabel()
-        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+//        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false // auto-layout only
         subtitleLabel.backgroundColor = UIColor.clearColor()
         subtitleLabel.textAlignment = .Left
+        subtitleLabel.numberOfLines = 2
         subtitleLabel.font = self.subtitleFont
         subtitleLabel.textColor = self.subtitleTextColor
         return subtitleLabel
         }()
+    
+    
+    private var imageViewFrame: CGRect {
+        return CGRect(x: 15.0, y: 8.0, width: 20.0, height: 20.0)
+    }
+
+    private var titleLabelFrame: CGRect {
+        if self.imageView.image == nil {
+            return CGRect(x: 5.0, y: 3.0, width: NotificationLayout.width - 5.0, height: 26.0)
+        }
+        return CGRect(x: 45.0, y: 3.0, width: NotificationLayout.width - 45.0, height: 26.0)
+    }
+    
+    private var messageLabelFrame: CGRect {
+        if self.imageView.image == nil {
+            return CGRect(x: 5, y: 25, width: NotificationLayout.width - 5, height: NotificationLayout.labelMessageHeight)
+        }
+        return CGRect(x: 45, y: 25, width: NotificationLayout.width - 45.0, height: NotificationLayout.labelMessageHeight)
+    }
+
     
     
    
@@ -72,7 +110,7 @@ public class RNNotificationView: UIToolbar {
     }
     
     public init() {
-        super.init(frame: CGRect(x: 0, y: 0, width: NotificationLayout.notificationWidth, height: NotificationLayout.notificationHeight))
+        super.init(frame: CGRect(x: 0, y: 0, width: NotificationLayout.width, height: NotificationLayout.height))
         
         startNotificationObservers()
         setupUI()
@@ -82,10 +120,16 @@ public class RNNotificationView: UIToolbar {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
+    // MARK: - Override Toolbar
+    
     public override func layoutSubviews() {
         super.layoutSubviews()
-        
-        setupFrame()
+        setupFrames()
+    }
+    
+    public override func intrinsicContentSize() -> CGSize {
+        return CGSize(width: UIViewNoIntrinsicMetric, height: NotificationLayout.height)
     }
     
     
@@ -102,6 +146,7 @@ public class RNNotificationView: UIToolbar {
         
     }
     
+    
     // MARK: - Orientation Observer
     
     @objc private func orientationStatusDidChange(notification: NSNotification) {
@@ -111,22 +156,27 @@ public class RNNotificationView: UIToolbar {
     
     // MARK: - Setups
     
-    private func setupFrame() {
+    private func setupFrames() {
         
         var frame = self.frame
-        frame.size.width = NotificationLayout.notificationWidth
+        frame.size.width = NotificationLayout.width
         self.frame = frame
+        
+        self.titleLabel.frame = self.titleLabelFrame
+        self.imageView.frame = self.imageViewFrame
+        self.subtitleLabel.frame = self.messageLabelFrame
+
+        fixLabelMessageSize()
     }
 
-    
     private func setupUI() {
         
         translatesAutoresizingMaskIntoConstraints = false
         
-        // iOS 7
-//        self.barTintColor = nil;
-//        self.translucent = YES;
-//        self.barStyle = UIBarStyleBlack;
+        // Bar style
+        self.barTintColor = nil
+        self.translucent = true
+        self.barStyle = UIBarStyle.Black
         
         self.tintColor = UIColor(red: 5, green: 31, blue: 75, alpha: 1)
         
@@ -135,8 +185,132 @@ public class RNNotificationView: UIToolbar {
         self.multipleTouchEnabled = false
         self.exclusiveTouch = true
         
+        self.frame = CGRect(x: 0, y: 0, width: NotificationLayout.width, height: NotificationLayout.height)
         self.autoresizingMask = [UIViewAutoresizing.FlexibleWidth, UIViewAutoresizing.FlexibleTopMargin, UIViewAutoresizing.FlexibleRightMargin, UIViewAutoresizing.FlexibleLeftMargin]
-
+        
+        // Add subviews
+        self.addSubview(self.titleLabel)
+        self.addSubview(self.subtitleLabel)
+        self.addSubview(self.imageView)
+        
+        // Setup frames
+        self.setupFrames()
     }
     
+    
+    // MARK: - Helper
+    
+    private func fixLabelMessageSize() {
+        let size = self.subtitleLabel.sizeThatFits(CGSize(width: NotificationLayout.width - NotificationLayout.labelPadding, height: CGFloat.max))
+        var frame = self.subtitleLabel.frame
+        frame.size.height = size.height > NotificationLayout.labelMessageHeight ? NotificationLayout.labelMessageHeight : size.height
+        self.subtitleLabel.frame = frame;
+    }
+    
+    // MARK: - Public Methods
+    
+    public func show(withImage image: UIImage?, title: String?, message: String?) {
+        
+        /// Invalidate dismissTimer
+        self.dismissTimer = nil
+        
+        // Tap action
+        //        self.sharedNotification.tapAction
+        
+        /// Image
+        self.imageView.image = image
+        self.titleLabel.text = title
+        self.subtitleLabel.text = message
+        
+        /// Prepare frame
+        var frame = self.frame
+        frame.origin.y = -frame.size.height
+        self.frame = frame
+        
+        self.setupFrames()
+        
+        self.userInteractionEnabled = true
+        self.isAnimating = true
+        
+        /// Add to window
+        if let window = UIApplication.sharedApplication().delegate?.window {
+            window?.windowLevel = UIWindowLevelStatusBar
+            window?.addSubview(self)
+        }
+        
+        /// Show animation
+        UIView.animateWithDuration(Notification.showAnimationDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+            
+            var frame = self.frame
+            frame.origin.y += frame.size.height
+            self.frame = frame
+            
+        }) { (finished) in
+            self.isAnimating = false
+        }
+        
+        // Schedule to hide
+        if self.duration > 0 {
+            self.dismissTimer = NSTimer.scheduledTimerWithTimeInterval(Notification.notificationDuration, target: self, selector: #selector(RNNotificationView.scheduledDismiss), userInfo: nil, repeats: false)
+        }
+        
+        
+    }
+    
+    // MARK: - Actions
+    
+    @objc private func scheduledDismiss() {
+        self.hide(completion: nil)
+    }
+
+    
+    dynamic internal func hide(completion completion: (() -> ())?) {
+        
+        guard !self.isDragging else {
+            self.dismissTimer = nil
+            return
+        }
+        
+        
+        if self.superview == nil {
+            isAnimating = false
+            return
+        }
+        
+        // Case are in animation of the hide
+        if (isAnimating) {
+            return
+        }
+        isAnimating = true
+        
+        // Invalidate timer auto close
+        self.dismissTimer = nil
+        
+        /// Show animation
+        UIView.animateWithDuration(Notification.showAnimationDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+            
+            var frame = self.frame
+            frame.origin.y -= frame.size.height
+            self.frame = frame
+            
+        }) { (finished) in
+            
+            self.removeFromSuperview()
+            UIApplication.sharedApplication().delegate?.window??.windowLevel = UIWindowLevelNormal
+            
+            self.isAnimating = false
+            
+            completion?()
+
+        }
+        
+    }
+    
+}
+
+
+public extension RNNotificationView {
+    public static func show(image image: UIImage?, title: String?, message: String?) {
+        self.sharedNotification.show(withImage: image, title: title, message: message)
+    }
 }

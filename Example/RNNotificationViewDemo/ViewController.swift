@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import RNNotificationView
 
 class ViewController: UIViewController {
 
@@ -18,6 +19,13 @@ class ViewController: UIViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    
+    // Actions
+    
+    @IBAction func action() {
+        RNNotificationView.show(image: UIImage(named: "sambleIcon"), title: "Zee Finance", message: "Do not compromise more than 30% of their income on rent. Do not compromise more than 30% of their income on rent.")
     }
 
 
