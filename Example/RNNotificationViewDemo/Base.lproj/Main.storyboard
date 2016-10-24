@@ -17,19 +17,31 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="XAF-VW-5ci">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="background" translatesAutoresizingMaskIntoConstraints="NO" id="XAF-VW-5ci">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Irg-iY-Bwe">
-                                <rect key="frame" x="208" y="285" width="184" height="30"/>
+                                <rect key="frame" x="175" y="270" width="250" height="60"/>
+                                <color key="backgroundColor" red="0.0" green="0.65286409854888916" blue="0.96456819772720337" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="184" id="S0N-vH-HY3"/>
-                                    <constraint firstAttribute="height" constant="30" id="rf1-cF-bFQ"/>
+                                    <constraint firstAttribute="width" constant="250" id="S0N-vH-HY3"/>
+                                    <constraint firstAttribute="height" constant="60" id="rf1-cF-bFQ">
+                                        <userDefinedRuntimeAttributes>
+                                            <userDefinedRuntimeAttribute type="number" keyPath="cornerRadius">
+                                                <integer key="value" value="30"/>
+                                            </userDefinedRuntimeAttribute>
+                                        </userDefinedRuntimeAttributes>
+                                    </constraint>
                                 </constraints>
-                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <state key="normal" title="Show Notification">
-                                    <color key="titleColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                        <integer key="value" value="30"/>
+                                    </userDefinedRuntimeAttribute>
+                                </userDefinedRuntimeAttributes>
                                 <connections>
                                     <action selector="showAlertAction" destination="BYZ-38-t0r" eventType="touchUpInside" id="t7f-0U-mkt"/>
                                 </connections>
@@ -52,6 +64,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="background" width="1600" height="1067"/>
+        <image name="background" width="1080" height="1920"/>
     </resources>
 </document>

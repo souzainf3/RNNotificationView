@@ -28,7 +28,7 @@ class ViewController: UIViewController {
         RNNotificationView.show(withImage: UIImage(named: "sambleIcon"),
                                 title: "Zee Finance",
                                 message: "Do not compromise more than 30% of their income on rent. Only consume essential.",
-                                duration: 10,
+                                duration: 2,
                                 onTap: {
                                     print("Did tap notification")
             }
