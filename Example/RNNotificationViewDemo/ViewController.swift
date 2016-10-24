@@ -27,7 +27,8 @@ class ViewController: UIViewController {
     @IBAction func showAlertAction() {
         RNNotificationView.show(withImage: UIImage(named: "sambleIcon"),
                                 title: "Zee Finance",
-                                message: "Do not compromise more than 30% of their income on rent. Do not compromise more than 30% of their income on rent.",
+                                message: "Do not compromise more than 30% of their income on rent. Only consume essential.",
+                                duration: 10,
                                 onTap: {
                                     print("Did tap notification")
             }

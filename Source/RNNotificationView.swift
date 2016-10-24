@@ -196,7 +196,7 @@ public class RNNotificationView: UIToolbar {
         
         self.tintColor = UIColor(red: 5, green: 31, blue: 75, alpha: 1)
         
-        self.layer.zPosition = CGFloat.max
+        self.layer.zPosition = CGFloat.max - 1
         self.backgroundColor = UIColor.clearColor()
         self.multipleTouchEnabled = false
         self.exclusiveTouch = true
@@ -342,9 +342,9 @@ public extension RNNotificationView {
         
         // Schedule to hide
         if self.duration > 0 {
-            self.dismissTimer = NSTimer.scheduledTimerWithTimeInterval(Notification.animationDuration, target: self, selector: #selector(RNNotificationView.scheduledDismiss), userInfo: nil, repeats: false)
+            let time = self.duration + Notification.animationDuration
+            self.dismissTimer = NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: #selector(RNNotificationView.scheduledDismiss), userInfo: nil, repeats: false)
         }
-        
         
     }
     
@@ -392,7 +392,7 @@ public extension RNNotificationView {
     // MARK: - Helpers
     
     public static func show(withImage image: UIImage?, title: String?, message: String?, duration: NSTimeInterval = Notification.exhibitionDuration, onTap: (() -> ())? = nil) {
-        self.sharedNotification.show(withImage: image, title: title, message: message, onTap: onTap)
+        self.sharedNotification.show(withImage: image, title: title, message: message, duration: duration, onTap: onTap)
     }
     
     public static func hide(completion completion: (() -> ())? = nil) {
