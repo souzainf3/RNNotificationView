@@ -24,6 +24,9 @@ Easy to use and customizable messages/notifications for iOS applications. ToatVi
 1. Add a pod entry for RNNotificationView to your Podfile `pod 'RNNotificationView'`
 2. Install the pod(s) by running `pod install`.
 
+
+## Using RNNotificationView
+
 ```swift
 
 // Using Singleton
@@ -49,7 +52,7 @@ notification.show(withImage: nil,
 })
 
 ```
-### Customizing
+## Customizing
 
 You can create a `RNNotificationView` instance and configure this properties:
 
