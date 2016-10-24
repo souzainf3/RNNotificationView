@@ -49,9 +49,8 @@ public class RNNotificationView: UIToolbar {
         }
     }
     private var verticalPositionConstraint: NSLayoutConstraint!
-//    private var tapAction = #selector(NotificationView.notificationViewTapped)
+    private var tapAction: (() -> ())?
 
-    
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
 //        imageView.translatesAutoresizingMaskIntoConstraints = false // auto-layout only
@@ -156,6 +155,7 @@ public class RNNotificationView: UIToolbar {
     
     // MARK: - Setups
     
+    // TODO: - Use autolayout
     private func setupFrames() {
         
         var frame = self.frame
@@ -192,6 +192,13 @@ public class RNNotificationView: UIToolbar {
         self.addSubview(self.titleLabel)
         self.addSubview(self.subtitleLabel)
         self.addSubview(self.imageView)
+        
+        
+        // Gestures
+        let tap = UITapGestureRecognizer(target: self, action: #selector(RNNotificationView.didTap(_:)))
+        self.addGestureRecognizer(tap)
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(RNNotificationView.didPan(_:)))
+        self.addGestureRecognizer(pan)
         
         // Setup frames
         self.setupFrames()
@@ -262,7 +269,6 @@ public class RNNotificationView: UIToolbar {
     @objc private func scheduledDismiss() {
         self.hide(completion: nil)
     }
-
     
     dynamic internal func hide(completion completion: (() -> ())?) {
         
@@ -270,7 +276,6 @@ public class RNNotificationView: UIToolbar {
             self.dismissTimer = nil
             return
         }
-        
         
         if self.superview == nil {
             isAnimating = false
@@ -303,8 +308,57 @@ public class RNNotificationView: UIToolbar {
             completion?()
 
         }
+    }
+    
+    
+    @objc private func didTap(gesture: UIGestureRecognizer) {
+        self.userInteractionEnabled = false
+        self.hide(completion: self.tapAction)
+    }
+
+    @objc private func didPan(gesture: UIPanGestureRecognizer) {
+        
+        switch gesture.state {
+        case .Ended:
+            self.isDragging = false
+            if frame.origin.y < 0 || self.duration <= 0 {
+                self.hide(completion: nil)
+            }
+            break
+            
+        case .Began:
+            self.isDragging = true
+            break
+
+        case .Changed:
+            
+            guard let superview = self.superview else {
+                return
+            }
+            
+            guard let gestureView = gesture.view else {
+                return
+            }
+            
+            let translation = gesture.translationInView(superview)
+            // Figure out where the user is trying to drag the view.
+            let newCenter = CGPoint(x: superview.bounds.size.width / 2,
+                                    y: gestureView.center.y + translation.y)
+            
+            // See if the new position is in bounds.
+            if (newCenter.y >= (-1 * NotificationLayout.height / 2) && newCenter.y <= NotificationLayout.height / 2) {
+                gestureView.center = newCenter
+                gesture.setTranslation(CGPoint.zero, inView: superview)
+            }
+
+            break
+
+        default:
+            break
+        }
         
     }
+
     
 }
 
