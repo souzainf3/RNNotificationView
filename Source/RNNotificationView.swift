@@ -7,77 +7,77 @@
 
 import UIKit
 
-public class RNNotificationView: UIToolbar {
+open class RNNotificationView: UIToolbar {
     
     // MARK: - Properties
     
-    public static var sharedNotification = RNNotificationView()
+    open static var sharedNotification = RNNotificationView()
 
-    public var titleFont = Notification.titleFont {
+    open var titleFont = Notification.titleFont {
         didSet {
             titleLabel.font = titleFont
         }
     }
-    public var titleTextColor = UIColor.whiteColor() {
+    open var titleTextColor = UIColor.white {
         didSet {
             titleLabel.textColor = titleTextColor
         }
     }
-    public var subtitleFont = Notification.subtitleFont {
+    open var subtitleFont = Notification.subtitleFont {
         didSet {
             subtitleLabel.font = subtitleFont
         }
     }
-    public var subtitleTextColor = UIColor.whiteColor() {
+    open var subtitleTextColor = UIColor.white {
         didSet {
             subtitleLabel.textColor = subtitleTextColor
         }
     }
-    public var duration: NSTimeInterval = Notification.exhibitionDuration
+    open var duration: TimeInterval = Notification.exhibitionDuration
     
-    public private(set) var isAnimating = false
-    public private(set) var isDragging = false
+    open fileprivate(set) var isAnimating = false
+    open fileprivate(set) var isDragging = false
     
-    private var dismissTimer: NSTimer? {
+    fileprivate var dismissTimer: Timer? {
         didSet {
-            if oldValue?.valid == true {
+            if oldValue?.isValid == true {
                 oldValue?.invalidate()
             }
         }
     }
     
-    private var tapAction: (() -> ())?
+    fileprivate var tapAction: (() -> ())?
 
    
     /// Views
     
-    private lazy var imageView: UIImageView = {
+    fileprivate lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 3
-        imageView.contentMode = UIViewContentMode.ScaleAspectFill
+        imageView.contentMode = UIViewContentMode.scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
     }()
-    private lazy var titleLabel: UILabel = { [unowned self] in
+    fileprivate lazy var titleLabel: UILabel = { [unowned self] in
         let titleLabel = UILabel()
-        titleLabel.backgroundColor = UIColor.clearColor()
-        titleLabel.textAlignment = .Left
+        titleLabel.backgroundColor = UIColor.clear
+        titleLabel.textAlignment = .left
         titleLabel.numberOfLines = 1
         titleLabel.font = self.titleFont
         titleLabel.textColor = self.titleTextColor
         return titleLabel
         }()
-    private lazy var subtitleLabel: UILabel = { [unowned self] in
+    fileprivate lazy var subtitleLabel: UILabel = { [unowned self] in
         let subtitleLabel = UILabel()
-        subtitleLabel.backgroundColor = UIColor.clearColor()
-        subtitleLabel.textAlignment = .Left
+        subtitleLabel.backgroundColor = UIColor.clear
+        subtitleLabel.textAlignment = .left
         subtitleLabel.numberOfLines = 2
         subtitleLabel.font = self.subtitleFont
         subtitleLabel.textColor = self.subtitleTextColor
         return subtitleLabel
         }()
     
-    private lazy var dragView: UIView = { [unowned self] in
+    fileprivate lazy var dragView: UIView = { [unowned self] in
         let dragView = UIView()
         dragView.backgroundColor = UIColor(white: 1.0, alpha: 0.35)
         dragView.layer.cornerRadius = NotificationLayout.dragViewHeight / 2
@@ -87,11 +87,11 @@ public class RNNotificationView: UIToolbar {
     
     /// Frames
     
-    private var imageViewFrame: CGRect {
+    fileprivate var imageViewFrame: CGRect {
         return CGRect(x: 15.0, y: 8.0, width: 20.0, height: 20.0)
     }
     
-    private var dragViewFrame: CGRect {
+    fileprivate var dragViewFrame: CGRect {
         let width: CGFloat = 40
         return CGRect(x: (NotificationLayout.width - width) / 2 ,
                       y: NotificationLayout.height - 5,
@@ -100,14 +100,14 @@ public class RNNotificationView: UIToolbar {
     }
     
 
-    private var titleLabelFrame: CGRect {
+    fileprivate var titleLabelFrame: CGRect {
         if self.imageView.image == nil {
             return CGRect(x: 5.0, y: 3.0, width: NotificationLayout.width - 5.0, height: 26.0)
         }
         return CGRect(x: 45.0, y: 3.0, width: NotificationLayout.width - 45.0, height: 26.0)
     }
     
-    private var messageLabelFrame: CGRect {
+    fileprivate var messageLabelFrame: CGRect {
         if self.imageView.image == nil {
             return CGRect(x: 5, y: 25, width: NotificationLayout.width - 5, height: NotificationLayout.labelMessageHeight)
         }
@@ -120,7 +120,7 @@ public class RNNotificationView: UIToolbar {
     // MARK: - Initialization
     
     deinit {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NotificationCenter.default.removeObserver(self)
     }
     
     public init() {
@@ -137,33 +137,33 @@ public class RNNotificationView: UIToolbar {
     
     // MARK: - Override Toolbar
     
-    public override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         setupFrames()
     }
     
-    public override func intrinsicContentSize() -> CGSize {
+    open override var intrinsicContentSize : CGSize {
         return CGSize(width: UIViewNoIntrinsicMetric, height: NotificationLayout.height)
     }
     
     
     // MARK: - Observers
     
-    private func startNotificationObservers() {
+    fileprivate func startNotificationObservers() {
         /// Enable orientation tracking
-        if !UIDevice.currentDevice().generatesDeviceOrientationNotifications {
-            UIDevice.currentDevice().beginGeneratingDeviceOrientationNotifications()
+        if !UIDevice.current.isGeneratingDeviceOrientationNotifications {
+            UIDevice.current.beginGeneratingDeviceOrientationNotifications()
         }
         
         /// Add Orientation notification
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(RNNotificationView.orientationStatusDidChange(_:)), name: UIDeviceOrientationDidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(RNNotificationView.orientationStatusDidChange(_:)), name: NSNotification.Name.UIDeviceOrientationDidChange, object: nil)
         
     }
     
     
     // MARK: - Orientation Observer
     
-    @objc private func orientationStatusDidChange(notification: NSNotification) {
+    @objc fileprivate func orientationStatusDidChange(_ notification: Foundation.Notification) {
         setupUI()
     }
     
@@ -171,7 +171,7 @@ public class RNNotificationView: UIToolbar {
     // MARK: - Setups
     
     // TODO: - Use autolayout
-    private func setupFrames() {
+    fileprivate func setupFrames() {
         
         var frame = self.frame
         frame.size.width = NotificationLayout.width
@@ -185,24 +185,24 @@ public class RNNotificationView: UIToolbar {
         fixLabelMessageSize()
     }
 
-    private func setupUI() {
+    fileprivate func setupUI() {
         
         translatesAutoresizingMaskIntoConstraints = false
         
         // Bar style
         self.barTintColor = nil
-        self.translucent = true
-        self.barStyle = UIBarStyle.Black
+        self.isTranslucent = true
+        self.barStyle = UIBarStyle.black
         
         self.tintColor = UIColor(red: 5, green: 31, blue: 75, alpha: 1)
         
-        self.layer.zPosition = CGFloat.max - 1
-        self.backgroundColor = UIColor.clearColor()
-        self.multipleTouchEnabled = false
-        self.exclusiveTouch = true
+        self.layer.zPosition = CGFloat.greatestFiniteMagnitude - 1
+        self.backgroundColor = UIColor.clear
+        self.isMultipleTouchEnabled = false
+        self.isExclusiveTouch = true
         
         self.frame = CGRect(x: 0, y: 0, width: NotificationLayout.width, height: NotificationLayout.height)
-        self.autoresizingMask = [UIViewAutoresizing.FlexibleWidth, UIViewAutoresizing.FlexibleTopMargin, UIViewAutoresizing.FlexibleRightMargin, UIViewAutoresizing.FlexibleLeftMargin]
+        self.autoresizingMask = [UIViewAutoresizing.flexibleWidth, UIViewAutoresizing.flexibleTopMargin, UIViewAutoresizing.flexibleRightMargin, UIViewAutoresizing.flexibleLeftMargin]
         
         // Add subviews
         self.addSubview(self.titleLabel)
@@ -224,8 +224,8 @@ public class RNNotificationView: UIToolbar {
     
     // MARK: - Helper
     
-    private func fixLabelMessageSize() {
-        let size = self.subtitleLabel.sizeThatFits(CGSize(width: NotificationLayout.width - NotificationLayout.labelPadding, height: CGFloat.max))
+    fileprivate func fixLabelMessageSize() {
+        let size = self.subtitleLabel.sizeThatFits(CGSize(width: NotificationLayout.width - NotificationLayout.labelPadding, height: CGFloat.greatestFiniteMagnitude))
         var frame = self.subtitleLabel.frame
         frame.size.height = size.height > NotificationLayout.labelMessageHeight ? NotificationLayout.labelMessageHeight : size.height
         self.subtitleLabel.frame = frame;
@@ -234,34 +234,34 @@ public class RNNotificationView: UIToolbar {
     
     // MARK: - Actions
     
-    @objc private func scheduledDismiss() {
+    @objc fileprivate func scheduledDismiss() {
         self.hide(completion: nil)
     }
     
     
     // MARK: - Tap gestures
     
-    @objc private func didTap(gesture: UIGestureRecognizer) {
-        self.userInteractionEnabled = false
+    @objc fileprivate func didTap(_ gesture: UIGestureRecognizer) {
+        self.isUserInteractionEnabled = false
         self.tapAction?()
         self.hide(completion: nil)
     }
 
-    @objc private func didPan(gesture: UIPanGestureRecognizer) {
+    @objc fileprivate func didPan(_ gesture: UIPanGestureRecognizer) {
         
         switch gesture.state {
-        case .Ended:
+        case .ended:
             self.isDragging = false
             if frame.origin.y < 0 || self.duration <= 0 {
                 self.hide(completion: nil)
             }
             break
             
-        case .Began:
+        case .began:
             self.isDragging = true
             break
 
-        case .Changed:
+        case .changed:
             
             guard let superview = self.superview else {
                 return
@@ -271,7 +271,7 @@ public class RNNotificationView: UIToolbar {
                 return
             }
             
-            let translation = gesture.translationInView(superview)
+            let translation = gesture.translation(in: superview)
             // Figure out where the user is trying to drag the view.
             let newCenter = CGPoint(x: superview.bounds.size.width / 2,
                                     y: gestureView.center.y + translation.y)
@@ -279,7 +279,7 @@ public class RNNotificationView: UIToolbar {
             // See if the new position is in bounds.
             if (newCenter.y >= (-1 * NotificationLayout.height / 2) && newCenter.y <= NotificationLayout.height / 2) {
                 gestureView.center = newCenter
-                gesture.setTranslation(CGPoint.zero, inView: superview)
+                gesture.setTranslation(CGPoint.zero, in: superview)
             }
 
             break
@@ -297,7 +297,7 @@ public extension RNNotificationView {
     
     // MARK: - Public Methods
     
-    public func show(withImage image: UIImage?, title: String?, message: String?, duration: NSTimeInterval = Notification.exhibitionDuration, onTap: (() -> ())?) {
+    public func show(withImage image: UIImage?, title: String?, message: String?, duration: TimeInterval = Notification.exhibitionDuration, onTap: (() -> ())?) {
         
         /// Invalidate dismissTimer
         self.dismissTimer = nil
@@ -320,17 +320,17 @@ public extension RNNotificationView {
         
         self.setupFrames()
         
-        self.userInteractionEnabled = true
+        self.isUserInteractionEnabled = true
         self.isAnimating = true
         
         /// Add to window
-        if let window = UIApplication.sharedApplication().delegate?.window {
+        if let window = UIApplication.shared.delegate?.window {
             window?.windowLevel = UIWindowLevelStatusBar
             window?.addSubview(self)
         }
         
         /// Show animation
-        UIView.animateWithDuration(Notification.animationDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+        UIView.animate(withDuration: Notification.animationDuration, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
             
             var frame = self.frame
             frame.origin.y += frame.size.height
@@ -343,12 +343,12 @@ public extension RNNotificationView {
         // Schedule to hide
         if self.duration > 0 {
             let time = self.duration + Notification.animationDuration
-            self.dismissTimer = NSTimer.scheduledTimerWithTimeInterval(time, target: self, selector: #selector(RNNotificationView.scheduledDismiss), userInfo: nil, repeats: false)
+            self.dismissTimer = Timer.scheduledTimer(timeInterval: time, target: self, selector: #selector(RNNotificationView.scheduledDismiss), userInfo: nil, repeats: false)
         }
         
     }
     
-    public func hide(completion completion: (() -> ())?) {
+    public func hide(completion: (() -> ())?) {
         
         guard !self.isDragging else {
             self.dismissTimer = nil
@@ -370,7 +370,7 @@ public extension RNNotificationView {
         self.dismissTimer = nil
         
         /// Show animation
-        UIView.animateWithDuration(Notification.animationDuration, delay: 0, options: UIViewAnimationOptions.CurveEaseOut, animations: {
+        UIView.animate(withDuration: Notification.animationDuration, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
             
             var frame = self.frame
             frame.origin.y -= frame.size.height
@@ -379,7 +379,7 @@ public extension RNNotificationView {
         }) { (finished) in
             
             self.removeFromSuperview()
-            UIApplication.sharedApplication().delegate?.window??.windowLevel = UIWindowLevelNormal
+            UIApplication.shared.delegate?.window??.windowLevel = UIWindowLevelNormal
             
             self.isAnimating = false
             
@@ -391,11 +391,11 @@ public extension RNNotificationView {
     
     // MARK: - Helpers
     
-    public static func show(withImage image: UIImage?, title: String?, message: String?, duration: NSTimeInterval = Notification.exhibitionDuration, onTap: (() -> ())? = nil) {
+    public static func show(withImage image: UIImage?, title: String?, message: String?, duration: TimeInterval = Notification.exhibitionDuration, onTap: (() -> ())? = nil) {
         self.sharedNotification.show(withImage: image, title: title, message: message, duration: duration, onTap: onTap)
     }
     
-    public static func hide(completion completion: (() -> ())? = nil) {
+    public static func hide(completion: (() -> ())? = nil) {
         self.sharedNotification.hide(completion: completion)
     }
 
