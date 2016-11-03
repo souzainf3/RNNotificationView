@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "RNNotificationView"
-  s.version      = "1.0.0"
+  s.version      = "1.1.0"
 
   s.summary      = "Emulates the native Notification Banner UI for any alert"
 
