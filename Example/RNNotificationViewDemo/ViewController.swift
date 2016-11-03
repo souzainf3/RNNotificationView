@@ -34,15 +34,16 @@ class ViewController: UIViewController {
             })
         
         // Create Instance
-//        let notification = RNNotificationView()
-//        notification.titleFont = UIFont(name: "AvenirNext-Bold", size: 10)!
-//        notification.titleTextColor = UIColor.blueColor()
-//        notification.show(withImage: nil,
-//                          title: "Title",
-//                          message: "Message",
-//                          onTap: {
-//                            print("Did tap notification")
-//        })
+        let notification = RNNotificationView()
+        notification.titleFont = UIFont(name: "AvenirNext-Bold", size: 10)!
+        notification.titleTextColor = UIColor.blue
+        notification.isAnimating
+        notification.show(withImage: nil,
+                         title: "Title",
+                          message: "Message",
+                          onTap: {
+                            print("Did tap notification")
+        })
     }
 
 
