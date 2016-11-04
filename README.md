@@ -10,13 +10,14 @@ Easy to use and customizable messages/notifications for iOS applications. ToatVi
 
 ## Support
 
+- [x] Swift 3.0 (version 2.0.0)
 - [x] Swift 2.3 (version 1.1.0)
 - [x] Swift 2.2 (version 1.0.0)
 
 ## Requirements
 
 * iOS 7.0+ / Mac OS X 10.9+
-* Xcode 8.0+, Swift 2.3
+* Xcode 8.0+, Swift 3.0
 
 ## Adding RNNotificationView to your project
 
