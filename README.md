@@ -85,3 +85,8 @@ titleTextColor: UIColor
 subtitleTextColor: UIColor
 ```
 
+* Icon size. *Default: NotificationLayout.iconSize*
+```swift
+iconSize: CGSize
+```
+
