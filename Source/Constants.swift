@@ -23,15 +23,12 @@ internal struct NotificationLayout {
     static let height: CGFloat = 64.0
     static var width: CGFloat { return UIScreen.main.bounds.size.width }
 
-    
+    static var labelTitleHeight: CGFloat = 26
     static var labelMessageHeight: CGFloat = 35
     static var dragViewHeight: CGFloat = 3
 
+    static let iconSize = CGSize(width: 22, height: 22)
 
-    
-    static let iconSize = CGSize(width: 36, height: 36)
-
-    static let labelPadding: CGFloat = 45
-
-    static let accessoryViewTrailing: CGFloat = 15
+    static let imageBorder: CGFloat = 15
+    static let textBorder: CGFloat = 10
 }

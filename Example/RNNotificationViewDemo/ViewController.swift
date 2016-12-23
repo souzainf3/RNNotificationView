@@ -29,21 +29,21 @@ class ViewController: UIViewController {
                                 title: "Zee Finance",
                                 message: "Do not compromise more than 30% of their income on rent. Only consume essential.",
                                 duration: 2,
+                                iconSize: CGSize(width: 46, height: 46),
                                 onTap: {
                                     print("Did tap notification")
             })
         
-        // Create Instance
-        let notification = RNNotificationView()
-        notification.titleFont = UIFont(name: "AvenirNext-Bold", size: 10)!
-        notification.titleTextColor = UIColor.blue
-        notification.isAnimating
-        notification.show(withImage: nil,
-                         title: "Title",
-                          message: "Message",
-                          onTap: {
-                            print("Did tap notification")
-        })
+//        // Create Instance
+//        let notification = RNNotificationView()
+//        notification.titleFont = UIFont(name: "AvenirNext-Bold", size: 10)!
+//        notification.titleTextColor = UIColor.blue
+//        notification.show(withImage: nil,
+//                         title: "Title",
+//                          message: "Message",
+//                          onTap: {
+//                            print("Did tap notification")
+//        })
     }
 
 

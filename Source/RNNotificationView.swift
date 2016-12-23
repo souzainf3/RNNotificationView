@@ -87,8 +87,14 @@ open class RNNotificationView: UIToolbar {
     
     /// Frames
     
+    open var  iconSize: CGSize = NotificationLayout.iconSize {
+        didSet {
+            self.setNeedsLayout()
+        }
+    }
+    
     fileprivate var imageViewFrame: CGRect {
-        return CGRect(x: 15.0, y: 8.0, width: 20.0, height: 20.0)
+        return CGRect(x: 15.0, y: 8.0, width: iconSize.width, height: iconSize.height)
     }
     
     fileprivate var dragViewFrame: CGRect {
@@ -100,18 +106,27 @@ open class RNNotificationView: UIToolbar {
     }
     
 
+    fileprivate var textPointX: CGFloat {
+        return  NotificationLayout.imageBorder + self.iconSize.width + NotificationLayout.textBorder
+    }
+    
+    /// The origin of the text
     fileprivate var titleLabelFrame: CGRect {
+        let y: CGFloat = 3
         if self.imageView.image == nil {
-            return CGRect(x: 5.0, y: 3.0, width: NotificationLayout.width - 5.0, height: 26.0)
+            let x: CGFloat = 5
+            return CGRect(x: x, y: y, width: NotificationLayout.width - x, height: NotificationLayout.labelTitleHeight)
         }
-        return CGRect(x: 45.0, y: 3.0, width: NotificationLayout.width - 45.0, height: 26.0)
+        return CGRect(x: textPointX, y: y, width: NotificationLayout.width - textPointX, height: NotificationLayout.labelTitleHeight)
     }
     
     fileprivate var messageLabelFrame: CGRect {
+        let y: CGFloat = 25
         if self.imageView.image == nil {
-            return CGRect(x: 5, y: 25, width: NotificationLayout.width - 5, height: NotificationLayout.labelMessageHeight)
+            let x: CGFloat = 5
+            return CGRect(x: x, y: y, width: NotificationLayout.width - x, height: NotificationLayout.labelMessageHeight)
         }
-        return CGRect(x: 45, y: 25, width: NotificationLayout.width - 45.0, height: NotificationLayout.labelMessageHeight)
+        return CGRect(x: textPointX, y: y, width: NotificationLayout.width - textPointX, height: NotificationLayout.labelMessageHeight)
     }
 
     
@@ -225,7 +240,7 @@ open class RNNotificationView: UIToolbar {
     // MARK: - Helper
     
     fileprivate func fixLabelMessageSize() {
-        let size = self.subtitleLabel.sizeThatFits(CGSize(width: NotificationLayout.width - NotificationLayout.labelPadding, height: CGFloat.greatestFiniteMagnitude))
+        let size = self.subtitleLabel.sizeThatFits(CGSize(width: NotificationLayout.width - self.textPointX, height: CGFloat.greatestFiniteMagnitude))
         var frame = self.subtitleLabel.frame
         frame.size.height = size.height > NotificationLayout.labelMessageHeight ? NotificationLayout.labelMessageHeight : size.height
         self.subtitleLabel.frame = frame;
@@ -297,21 +312,20 @@ public extension RNNotificationView {
     
     // MARK: - Public Methods
     
-    public func show(withImage image: UIImage?, title: String?, message: String?, duration: TimeInterval = Notification.exhibitionDuration, onTap: (() -> ())?) {
+    public func show(withImage image: UIImage?, title: String?, message: String?, duration: TimeInterval = Notification.exhibitionDuration, iconSize: CGSize = NotificationLayout.iconSize, onTap: (() -> ())?) {
         
         /// Invalidate dismissTimer
         self.dismissTimer = nil
         
-        // Tap action
         self.tapAction = onTap
-        
-        // Duration
         self.duration = duration
         
-        /// Image
+        /// Content
         self.imageView.image = image
         self.titleLabel.text = title
         self.subtitleLabel.text = message
+        
+        self.iconSize = iconSize
         
         /// Prepare frame
         var frame = self.frame
@@ -391,8 +405,8 @@ public extension RNNotificationView {
     
     // MARK: - Helpers
     
-    public static func show(withImage image: UIImage?, title: String?, message: String?, duration: TimeInterval = Notification.exhibitionDuration, onTap: (() -> ())? = nil) {
-        self.sharedNotification.show(withImage: image, title: title, message: message, duration: duration, onTap: onTap)
+    public static func show(withImage image: UIImage?, title: String?, message: String?, duration: TimeInterval = Notification.exhibitionDuration, iconSize: CGSize = NotificationLayout.iconSize, onTap: (() -> ())? = nil) {
+        self.sharedNotification.show(withImage: image, title: title, message: message, duration: duration, iconSize: iconSize, onTap: onTap)
     }
     
     public static func hide(completion: (() -> ())? = nil) {
