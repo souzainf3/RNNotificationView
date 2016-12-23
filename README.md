@@ -10,7 +10,7 @@ Easy to use and customizable messages/notifications for iOS applications. ToatVi
 
 ## Support
 
-- [x] Swift 3.0 (version 2.0.0)
+- [x] Swift 3.0 (version 2.x)
 - [x] Swift 2.3 (version 1.1.0)
 - [x] Swift 2.2 (version 1.0.0)
 
@@ -33,24 +33,26 @@ Easy to use and customizable messages/notifications for iOS applications. ToatVi
 
 // Using Singleton
 RNNotificationView.show(withImage: UIImage(named: "sambleIcon"),
-                                title: "Title",
-                                message: "Message",
-                                duration: 2,
-                                onTap: {
-                                    print("Did tap notification")
-            }
-        )
+title: "Title",
+message: "Message",
+duration: 2,
+iconSize: CGSize(width: 22, height: 22), // Optional setup
+onTap: {
+print("Did tap notification")
+}
+)
 
 // Creating instance
 let notification = RNNotificationView()
 // Customizations
 notification.titleFont = UIFont(name: "AvenirNext-Bold", size: 10)!
 notification.titleTextColor = UIColor.blueColor()
+notification.iconSize = CGSize(width: 46, height: 46) // Optional setup
 notification.show(withImage: nil,
-                      title: "Title",
-                    message: "Message",
-                      onTap: {
-                            print("Did tap notification")
+title: "Title",
+message: "Message",
+onTap: {
+print("Did tap notification")
 })
 
 ```
