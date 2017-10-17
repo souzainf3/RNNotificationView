@@ -1,6 +1,9 @@
 # RNNotificationView - CHANGELOG
 
 ## 2.0.1
+- Swift 4
+
+## 2.0.1
 - Support to change icon size
 
 ## 2.0.0
