@@ -190,6 +190,9 @@ open class RNNotificationView: UIToolbar {
         
         var frame = self.frame
         frame.size.width = NotificationLayout.width
+        if UIDevice().userInterfaceIdiom == .phone && UIScreen.main.nativeBounds.height == 2436 {// iphone X
+            frame.origin.y += 15
+        }
         self.frame = frame
         
         self.titleLabel.frame = self.titleLabelFrame
