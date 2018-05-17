@@ -20,8 +20,26 @@ public struct Notification {
 }
 
 public struct NotificationLayout {
-    static let height: CGFloat = 64.0
+    static var height: CGFloat {
+        let defaultHeight: CGFloat = 64.0
+        if #available(iOS 11.0, *) {
+            if let top = UIApplication.shared.delegate?.window??.safeAreaInsets.top {
+                return defaultHeight + top
+            }
+        }
+        return defaultHeight
+    }
     static var width: CGFloat { return UIScreen.main.bounds.size.width }
+    
+    static var contentTop: CGFloat {
+        let defaultTop: CGFloat = 0
+        if #available(iOS 11.0, *) {
+            if let top = UIApplication.shared.delegate?.window??.safeAreaInsets.top {
+                return defaultTop + top
+            }
+        }
+        return defaultTop
+    }
 
     static var labelTitleHeight: CGFloat = 26
     static var labelMessageHeight: CGFloat = 35

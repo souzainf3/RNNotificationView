@@ -94,7 +94,7 @@ open class RNNotificationView: UIToolbar {
     }
     
     fileprivate var imageViewFrame: CGRect {
-        return CGRect(x: 15.0, y: 8.0, width: iconSize.width, height: iconSize.height)
+        return CGRect(x: 15.0, y: 8.0 + NotificationLayout.contentTop, width: iconSize.width, height: iconSize.height)
     }
     
     fileprivate var dragViewFrame: CGRect {
@@ -112,7 +112,7 @@ open class RNNotificationView: UIToolbar {
     
     /// The origin of the text
     fileprivate var titleLabelFrame: CGRect {
-        let y: CGFloat = 3
+        let y: CGFloat = 3 + NotificationLayout.contentTop
         if self.imageView.image == nil {
             let x: CGFloat = 5
             return CGRect(x: x, y: y, width: NotificationLayout.width - x, height: NotificationLayout.labelTitleHeight)
@@ -121,16 +121,16 @@ open class RNNotificationView: UIToolbar {
     }
     
     fileprivate var messageLabelFrame: CGRect {
-        let y: CGFloat = 25
+        let y: CGFloat = 25 + NotificationLayout.contentTop
         if self.imageView.image == nil {
             let x: CGFloat = 5
             return CGRect(x: x, y: y, width: NotificationLayout.width - x, height: NotificationLayout.labelMessageHeight)
         }
         return CGRect(x: textPointX, y: y, width: NotificationLayout.width - textPointX, height: NotificationLayout.labelMessageHeight)
     }
+    
+    private var previousStatusBarStyle: UIStatusBarStyle?
 
-    
-    
    
     // MARK: - Initialization
     
@@ -314,6 +314,10 @@ public extension RNNotificationView {
     
     public func show(withImage image: UIImage?, title: String?, message: String?, duration: TimeInterval = Notification.exhibitionDuration, iconSize: CGSize = NotificationLayout.iconSize, onTap: (() -> ())?) {
         
+        guard let window = UIApplication.shared.delegate?.window else {
+            return
+        }
+        
         /// Invalidate dismissTimer
         self.dismissTimer = nil
         
@@ -338,18 +342,23 @@ public extension RNNotificationView {
         self.isAnimating = true
         
         /// Add to window
-        if let window = UIApplication.shared.delegate?.window {
+        if #available(iOS 11.0, *), let _ =
+            UIApplication.shared.delegate?.window??.safeAreaInsets.top {
+            self.previousStatusBarStyle = UIApplication.shared.statusBarStyle
+            window?.windowLevel = UIWindowLevelNormal
+            UIApplication.shared.setStatusBarStyle(.lightContent, animated: true)
+        } else {
             window?.windowLevel = UIWindowLevelStatusBar
-            window?.addSubview(self)
         }
+        window?.addSubview(self)
         
         /// Show animation
         UIView.animate(withDuration: Notification.animationDuration, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
-            
+
             var frame = self.frame
             frame.origin.y += frame.size.height
             self.frame = frame
-            
+
         }) { (finished) in
             self.isAnimating = false
         }
@@ -395,8 +404,13 @@ public extension RNNotificationView {
             self.removeFromSuperview()
             UIApplication.shared.delegate?.window??.windowLevel = UIWindowLevelNormal
             
-            self.isAnimating = false
+            if #available(iOS 11.0, *) {
+                if let style = self.previousStatusBarStyle {
+                    UIApplication.shared.setStatusBarStyle(style, animated: true)
+                }
+            }
             
+            self.isAnimating = false
             completion?()
             
         }
