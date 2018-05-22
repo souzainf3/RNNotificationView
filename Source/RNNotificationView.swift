@@ -405,10 +405,8 @@ public extension RNNotificationView {
             self.removeFromSuperview()
             UIApplication.shared.delegate?.window??.windowLevel = UIWindowLevelNormal
             
-            if #available(iOS 11.0, *) {
-                if let style = self.previousStatusBarStyle {
-                    UIApplication.shared.setStatusBarStyle(style, animated: true)
-                }
+            if #available(iOS 11.0, *), let style = self.previousStatusBarStyle {
+                UIApplication.shared.setStatusBarStyle(style, animated: true)
             }
             
             self.isAnimating = false
