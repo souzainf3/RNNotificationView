@@ -5,8 +5,9 @@ Emulates the native Notification Banner UI for any alert.
 Easy to use and customizable messages/notifications for iOS applications. ToatView with gestures.
 
 
-
 [![](https://raw.githubusercontent.com/souzainf3/RNNotificationView/master/gif/rnnotificationview.gif)](https://raw.githubusercontent.com/souzainf3/RNNotificationView/master/gif/rnnotificationview.gif)
+
+> For iPhone X make sure `View controller-based status bar appearance` is set to `NO` in your info.plist to change status bar style.
 
 ## Support
 
