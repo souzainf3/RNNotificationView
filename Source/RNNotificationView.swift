@@ -344,9 +344,10 @@ public extension RNNotificationView {
         /// Add to window
         if #available(iOS 11.0, *), let _ =
             UIApplication.shared.delegate?.window??.safeAreaInsets.top {
+            // iPhone X
             self.previousStatusBarStyle = UIApplication.shared.statusBarStyle
             window?.windowLevel = UIWindowLevelNormal
-            UIApplication.shared.setStatusBarStyle(.lightContent, animated: true)
+            window?.rootViewController?.setStatusBarStyle(style: .lightContent)
         } else {
             window?.windowLevel = UIWindowLevelStatusBar
         }
@@ -427,4 +428,12 @@ public extension RNNotificationView {
         self.sharedNotification.hide(completion: completion)
     }
 
+}
+
+extension UIViewController {
+    // Note: Make sure "View controller-based status bar appearance" is set to NO in your target settings or this won't work
+    func setStatusBarStyle(style: UIStatusBarStyle) {
+        UIApplication.shared.statusBarStyle = style
+        setNeedsStatusBarAppearanceUpdate()
+    }
 }
