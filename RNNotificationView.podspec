@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "RNNotificationView"
-  s.version      = "3.0.0"
+  s.version      = "3.0.1"
   s.summary      = "Emulates the native Notification Banner UI for any alert"
   s.description  = <<-DESC
 Easy to use and customizable messages/notifications for iOS applications. ToatView with gestures.
