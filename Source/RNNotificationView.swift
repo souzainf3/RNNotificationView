@@ -342,8 +342,8 @@ public extension RNNotificationView {
         self.isAnimating = true
         
         /// Add to window
-        if #available(iOS 11.0, *), let _ =
-            UIApplication.shared.delegate?.window??.safeAreaInsets.top {
+        if #available(iOS 11.0, *), let top =
+            UIApplication.shared.delegate?.window??.safeAreaInsets.top, top > 0 {
             // iPhone X
             self.previousStatusBarStyle = UIApplication.shared.statusBarStyle
             window?.windowLevel = UIWindowLevelNormal
