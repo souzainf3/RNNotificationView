@@ -17,5 +17,5 @@ Easy to use and customizable messages/notifications for iOS applications. ToatVi
   s.source_files            = "Source/**/*.{swift}"
   s.frameworks              = "UIKit"
   s.requires_arc            = true
-  s.pod_target_xcconfig     = { 'SWIFT_VERSION' => '4.0' }
+  s.swift_version = '4.0'
 end
