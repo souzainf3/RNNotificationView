@@ -3,7 +3,7 @@
 //
 //  Created by Romilson Nunes on 21/10/16.
 //
-//
+// Updated by Maysam Shahsavari on 30/09/2018
 
 import UIKit
 
@@ -11,8 +11,8 @@ open class RNNotificationView: UIToolbar {
     
     // MARK: - Properties
     
-    open static var sharedNotification = RNNotificationView()
-
+    public static var sharedNotification = RNNotificationView()
+    
     open var titleFont = Notification.titleFont {
         didSet {
             titleLabel.font = titleFont
@@ -33,6 +33,7 @@ open class RNNotificationView: UIToolbar {
             subtitleLabel.textColor = subtitleTextColor
         }
     }
+    
     open var duration: TimeInterval = Notification.exhibitionDuration
     
     open fileprivate(set) var isAnimating = false
@@ -47,8 +48,8 @@ open class RNNotificationView: UIToolbar {
     }
     
     fileprivate var tapAction: (() -> ())?
-
-   
+    
+    
     /// Views
     
     fileprivate lazy var imageView: UIImageView = {
@@ -105,7 +106,7 @@ open class RNNotificationView: UIToolbar {
                       height: NotificationLayout.dragViewHeight)
     }
     
-
+    
     fileprivate var textPointX: CGFloat {
         return  NotificationLayout.imageBorder + self.iconSize.width + NotificationLayout.textBorder
     }
@@ -130,8 +131,8 @@ open class RNNotificationView: UIToolbar {
     }
     
     private var previousStatusBarStyle: UIStatusBarStyle?
-
-   
+    
+    
     // MARK: - Initialization
     
     deinit {
@@ -196,10 +197,10 @@ open class RNNotificationView: UIToolbar {
         self.imageView.frame = self.imageViewFrame
         self.subtitleLabel.frame = self.messageLabelFrame
         self.dragView.frame = self.dragViewFrame
-
+        
         fixLabelMessageSize()
     }
-
+    
     fileprivate func setupUI() {
         
         translatesAutoresizingMaskIntoConstraints = false
@@ -261,7 +262,7 @@ open class RNNotificationView: UIToolbar {
         self.tapAction?()
         self.hide(completion: nil)
     }
-
+    
     @objc fileprivate func didPan(_ gesture: UIPanGestureRecognizer) {
         
         switch gesture.state {
@@ -275,7 +276,7 @@ open class RNNotificationView: UIToolbar {
         case .began:
             self.isDragging = true
             break
-
+            
         case .changed:
             
             guard let superview = self.superview else {
@@ -296,9 +297,9 @@ open class RNNotificationView: UIToolbar {
                 gestureView.center = newCenter
                 gesture.setTranslation(CGPoint.zero, in: superview)
             }
-
+            
             break
-
+            
         default:
             break
         }
@@ -355,11 +356,11 @@ public extension RNNotificationView {
         
         /// Show animation
         UIView.animate(withDuration: Notification.animationDuration, delay: 0, options: UIViewAnimationOptions.curveEaseOut, animations: {
-
+            
             var frame = self.frame
             frame.origin.y += frame.size.height
             self.frame = frame
-
+            
         }) { (finished) in
             self.isAnimating = false
         }
@@ -406,7 +407,10 @@ public extension RNNotificationView {
             UIApplication.shared.delegate?.window??.windowLevel = UIWindowLevelNormal
             
             if #available(iOS 11.0, *), let style = self.previousStatusBarStyle {
-                UIApplication.shared.setStatusBarStyle(style, animated: true)
+                if let viewController = UIApplication.shared.keyWindow?.rootViewController {
+                    viewController.statusBarStyle = style
+                }
+                
             }
             
             self.isAnimating = false
@@ -414,7 +418,7 @@ public extension RNNotificationView {
             
         }
     }
-
+    
     
     // MARK: - Helpers
     
@@ -425,13 +429,45 @@ public extension RNNotificationView {
     public static func hide(completion: (() -> ())? = nil) {
         self.sharedNotification.hide(completion: completion)
     }
-
+    
 }
 
 extension UIViewController {
     // Note: Make sure "View controller-based status bar appearance" is set to NO in your target settings or this won't work
+    
+    
     func setStatusBarStyle(style: UIStatusBarStyle) {
-        UIApplication.shared.statusBarStyle = style
+        //UIApplication.shared.statusBarStyle = style
+        self.statusBarStyle = style
         setNeedsStatusBarAppearanceUpdate()
+    }
+}
+
+extension UINavigationController {
+    
+    open override var preferredStatusBarStyle : UIStatusBarStyle {
+        let style = topViewController?.statusBarStyle ?? .default
+        return style
+    }
+}
+
+extension UIViewController {
+    
+    fileprivate struct StatusBarAssociatedKeys {
+        static var preferredStatusBarStyle = "preferredStatusBarStyle"
+    }
+    
+    public var statusBarStyle: UIStatusBarStyle {
+        get {
+            let raw = objc_getAssociatedObject(self, &StatusBarAssociatedKeys.preferredStatusBarStyle)
+            guard let rawValue = raw as? Int else {
+                return .default
+            }
+            return UIStatusBarStyle(rawValue: rawValue) ?? .default
+        }
+        set {
+            setNeedsStatusBarAppearanceUpdate()
+            objc_setAssociatedObject(self, &StatusBarAssociatedKeys.preferredStatusBarStyle, newValue.rawValue, .OBJC_ASSOCIATION_RETAIN)
+        }
     }
 }
